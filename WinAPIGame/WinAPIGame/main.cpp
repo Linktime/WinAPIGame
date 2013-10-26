@@ -2,36 +2,21 @@
    涂鸦逃亡
   ------------------------------------------------------------*/
 
-#include <windows.h>
-#include <TCHAR.h>
-#include "draw.cpp"
-
-#define WINDOW_HEIGHT 640
-#define WINDOW_WIDTH 960
-
-#define _UNICODE
+#include "GameHead.h"
+//绘板源文件
+#include "DrawBoard.cpp"
+//板子队列源文件
+#include "BoardList.cpp"
+//随机数帮助源文件
+#include "RandHelper.cpp"
 
 //全局变量
 HWND ghMainWnd;
-static SIZE size;
+SIZE size;
 static HPEN		blackPen;
 
-class Board {
-private:
-	int xl,yt,xr,yb;
-public:
-	Board(int xl,int yt,int xr,int yb):xl(xl),yt(yt),xr(xr),yb(yb){}
-	void up(){
-		yt+=10;
-		yb+=10;
-	}
-	void draw(HDC & hdc) {
-	Ellipse(hdc,xl,yt,xr,yb);
-	}
-};
-
 LRESULT CALLBACK WndProc (HWND, UINT, WPARAM, LPARAM) ;
-void drawBackground(HDC & hdc);
+void drawBackground();
 
 int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
                     PSTR szCmdLine, int iCmdShow)
@@ -92,39 +77,68 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
      PAINTSTRUCT ps ;
      RECT        rect ;
 	 HINSTANCE   hInstance;
+	 int tmpX;
+	 int tmpY;
 	 static HBRUSH pBrush;
-	
+	 static Board * pb,* lastboard;
+	 Board * tmpboard;
+	 static List blist;
+	 randhelper rh;
 	      
      switch (message)
      {
      case WM_CREATE:
 		  blackPen = CreatePen(PS_SOLID,20,RGB(0,0,0));
 		  pBrush = CreateSolidBrush(RGB(255, 213, 213));
+		  pb = new Board(100,500,200,510);
+		  SetTimer(hwnd,TIMER,100,(TIMERPROC) NULL);
+		  lastboard = NULL;
 		  return 0 ;
           
 	case WM_SIZE:
 		  size.cx  = LOWORD(lParam);
 		  size.cy  = HIWORD(lParam);
-		    
+		  pb->draw(ghMainWnd);
 		  return 0;
 
-     case WM_PAINT:
-          //hdc = BeginPaint (hwnd, &ps) ;
-		  
-		  //Ellipse(hdc,100,200,300,450);
-          //EndPaint (hwnd, &ps) ;
-          return 0 ;
+	case WM_TIMER:
+		drawBackground();
+
+		if (rh.randCreate()==1) {
+			tmpX = rh.randX();
+			tmpY = WINDOW_HEIGHT;
+			if (lastboard){
+				if (abs(lastboard->getX()-tmpX)<100) {
+					tmpX = lastboard->getX()>tmpX?tmpX-100:tmpX+100;
+				}
+				if (abs(lastboard->getY()-0)<50) {
+					tmpY = lastboard->getY() - 50;
+				}
+			}
+			tmpboard = new Board(tmpX,tmpY,tmpX+100,tmpY+10);
+			lastboard = tmpboard;
+			blist.addBoard(tmpboard);
+		}
+		for (int i=0;i<blist.getCount();i++) {
+			if (!blist.empty()&&blist[(blist.getTil()+i)%blist.getMax()]->drawUp(ghMainWnd)==0) {
+				blist.removeTopBoard();
+			}
+		}
+		 
+		 //pb->drawUp(ghMainWnd);
+		 return 0;
 
 	 case WM_CHAR:
-		 hdc = GetDC(hwnd);
-		 drawBackground(hdc);
-		 //TODO
-		 //Board b1 =new Board(100,100,200,200);
-		 //b1.draw(hdc);
-		 ReleaseDC(hwnd,hdc);
-          return 0;
 
+          return 0;
+		  
+	 case WM_LBUTTONDOWN:
+		 
+		 return 0;
+	
      case WM_DESTROY:
+		 delete pb;
+		 blist.clean();
 		 DeleteObject(pBrush);
 		 DeleteObject(blackPen);
           PostQuitMessage (0) ;
@@ -133,10 +147,12 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
      return DefWindowProc (hwnd, message, wParam, lParam) ;
 }
 
-void drawBackground(HDC & hdc){
+void drawBackground(){
 	HBRUSH bBrush;
 	HPEN oPen;
 	RECT rt;
+	HDC hdc;
+	hdc = GetDC(ghMainWnd);
 	oPen = CreatePen(PS_SOLID,1,RGB(255,204,153));
 	bBrush = CreateSolidBrush(RGB(235, 255, 255));
 	rt.left = 0;
@@ -156,4 +172,6 @@ void drawBackground(HDC & hdc){
 	}
 	DeleteObject(bBrush);
 	DeleteObject(oPen);
+	ReleaseDC(ghMainWnd,hdc);
 };
+

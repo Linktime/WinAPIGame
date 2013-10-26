@@ -18,8 +18,19 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="draw.cpp">
+    <ClCompile Include="DrawBoard.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="BoardList.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RandHelper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameHead.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
