@@ -9,6 +9,8 @@
 #include "BoardList.cpp"
 //随机数帮助源文件
 #include "RandHelper.cpp"
+//人物
+#include "Role.cpp"
 
 //全局变量
 HWND ghMainWnd;
@@ -80,7 +82,9 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	 int tmpX;
 	 int tmpY;
 	 static HBRUSH pBrush;
-	 static Board * pb,* lastboard;
+	 boolean tmpfall;
+	 static Role role(WINDOW_WIDTH/2,0,WINDOW_WIDTH/2+50,50);
+	 static Board * lastboard;
 	 Board * tmpboard;
 	 static List blist;
 	 randhelper rh;
@@ -90,7 +94,6 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
      case WM_CREATE:
 		  blackPen = CreatePen(PS_SOLID,20,RGB(0,0,0));
 		  pBrush = CreateSolidBrush(RGB(255, 213, 213));
-		  pb = new Board(100,500,200,510);
 		  SetTimer(hwnd,TIMER,100,(TIMERPROC) NULL);
 		  lastboard = NULL;
 		  return 0 ;
@@ -98,37 +101,82 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_SIZE:
 		  size.cx  = LOWORD(lParam);
 		  size.cy  = HIWORD(lParam);
-		  pb->draw(ghMainWnd);
+		  //pb->draw(ghMainWnd);
 		  return 0;
 
 	case WM_TIMER:
+		//重绘背景
 		drawBackground();
 
+		//随机生成木块
 		if (rh.randCreate()==1) {
 			tmpX = rh.randX();
 			tmpY = WINDOW_HEIGHT;
+			//避免两块木板之间距离过近
 			if (lastboard){
-				if (abs(lastboard->getX()-tmpX)<100) {
-					tmpX = lastboard->getX()>tmpX?tmpX-100:tmpX+100;
+				if (abs(lastboard->getXl()-tmpX)<100) {
+					tmpX = lastboard->getXl()>tmpX?tmpX-100:tmpX+100;
 				}
-				if (abs(lastboard->getY()-0)<50) {
-					tmpY = lastboard->getY() - 50;
+				if (abs(lastboard->getYb()-0)<50) {
+					tmpY = lastboard->getYb() - 50;
 				}
 			}
 			tmpboard = new Board(tmpX,tmpY,tmpX+100,tmpY+10);
 			lastboard = tmpboard;
 			blist.addBoard(tmpboard);
 		}
+		
+		//木板上升
 		for (int i=0;i<blist.getCount();i++) {
-			if (!blist.empty()&&blist[(blist.getTil()+i)%blist.getMax()]->drawUp(ghMainWnd)==0) {
+			tmpboard = blist[(blist.getTil()+i)%blist.getMax()];
+			if (!blist.empty()&&tmpboard->drawUp(ghMainWnd)==0) {
 				blist.removeTopBoard();
 			}
+			if (abs(tmpboard->getYt()-role.getYb())<=5) {
+				//判断角色脚下是否有木版，有则停留
+				if ((tmpboard->getXl()<role.getXl()&&tmpboard->getXr()>role.getXl())||(tmpboard->getXr()>role.getXr()&&tmpboard->getXl()<role.getXr()))
+					role.setFall(false);
+			}
 		}
+		//绘制角色
+		role.drawUp(ghMainWnd);
 		 
-		 //pb->drawUp(ghMainWnd);
 		 return 0;
 
 	 case WM_CHAR:
+		 tmpfall = true;
+		 drawBackground();
+		 for (int i=0;i<blist.getCount();i++) {
+			if (!blist.empty()) {
+				tmpboard = blist[(blist.getTil()+i)%blist.getMax()];
+				tmpboard->draw(ghMainWnd);
+			}
+		}
+
+		 switch (wParam) {
+			case 'a':
+				role.drawLeft(ghMainWnd);
+				break;
+			case 'd':
+				role.drawRight(ghMainWnd);
+				break;
+			case 'w':
+				role.setFall(false);
+				break;
+			case 's':
+				role.setFall(true);
+				break;
+		 }
+
+		 	for (int i=0;i<blist.getCount();i++) {
+			if (!blist.empty()) {
+				tmpboard = blist[(blist.getTil()+i)%blist.getMax()];
+				if (abs(tmpboard->getYt()-role.getYb())<=5)
+					if ((tmpboard->getXl()<role.getXl()&&tmpboard->getXr()>role.getXl())||(tmpboard->getXr()>role.getXr()&&tmpboard->getXl()<role.getXr()))
+						tmpfall=false;
+			}
+		}
+			role.setFall(tmpfall);
 
           return 0;
 		  
@@ -137,7 +185,6 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		 return 0;
 	
      case WM_DESTROY:
-		 delete pb;
 		 blist.clean();
 		 DeleteObject(pBrush);
 		 DeleteObject(blackPen);

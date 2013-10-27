@@ -8,7 +8,7 @@ public :
 	int randCreate () {
 		//srand(unsigned(time(0)));
 		//return 0+(2-0)*rand()/(RAND_MAX + 1.0);
-		return rand()%10;
+		return rand()%20;
 	}
 
 	int randX() {

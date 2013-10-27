@@ -66,6 +66,7 @@
     <ClCompile Include="BoardList.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RandHelper.cpp" />
+    <ClCompile Include="Role.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameHead.h" />

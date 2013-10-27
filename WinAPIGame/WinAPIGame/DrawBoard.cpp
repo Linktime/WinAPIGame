@@ -6,12 +6,19 @@ private:
 	int xl,yt,xr,yb;
 public :
 	Board(int xl,int yt,int xr,int yb) : xl(xl),yt(yt),xr(xr),yb(yb){};
-	int getX(){
+	int getXl(){
 		return xl;
 	}
-	int getY() {
+	int getYt() {
 		return yt;
 	}
+	int getXr(){
+		return xr;
+	}
+	int getYb() {
+		return yb;
+	}
+
 	void draw(HWND & ghMainWnd) {
 		 HDC hdc;
 		 hdc = GetDC(ghMainWnd);

@@ -27,6 +27,9 @@
     <ClCompile Include="RandHelper.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Role.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameHead.h">
