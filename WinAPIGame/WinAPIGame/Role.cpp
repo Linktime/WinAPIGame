@@ -3,18 +3,18 @@
 #define ROLE
 class Role{
 private:
-	int xl,yt,xr,yb;
+	int xl,yt;
 	boolean fall;
+	int laycount;
 	int life;
+	int width, height;
+
 public:
-	Role(int xl,int yt,int xr,int yb):xl(xl),yt(yt),xr(xr),yb(yb){
+	Role(int xl,int yt):xl(xl),yt(yt), width(40), height(40){
 		life=1;
 		fall=true;
 	}
 
-	int getYb(){
-		return yb;
-	}
 
 	int getXl() {
 		return xl;
@@ -24,18 +24,43 @@ public:
 		return yt;
 	}
 
-	int getXr() {
-		return xr;
-	}
+	int getWidth() {
+		return width;
+	} 
 
+	int getHeight(){
+		return height;
+	}
+	int getLaycount(){
+		return laycount; 
+	}
 	void setFall(boolean f){
 		fall = f;
 	}
+	boolean getFall(){
+		return fall;
+	}
+	void setOnBoard(int yb1){
+	
+		yt = yb1-40;
 
-	void draw(HWND ghMainWnd){
-		 HDC hdc;
+	}
+
+	void draw(HWND & ghMainWnd){
+		 HDC hdc, memDC;
 		 hdc = GetDC(ghMainWnd);
-		 HBRUSH hBrush;
+		 HBITMAP db, tmpBitmap, cBitmap;
+		 memDC = CreateCompatibleDC(hdc);
+		 //cBitmap = CreateCompatibleBitmap(memDC, 120,120);
+		 //SelectObject(memDC, cBitmap);
+		 db = LoadBitmap(ghInst, "db");
+		// SelectObject(memDC, db);
+		 tmpBitmap = (HBITMAP)SelectObject(memDC, db);
+        // BitBlt(hdc, 50, 50, 120, 120, memDC, 0 ,0 ,SRCCOPY);
+		 TransparentBlt(hdc,xl,yt,40,40,memDC,0,0,width,height,RGB(0,0,255));
+		SelectObject(hdc, tmpBitmap);
+		 DeleteObject(db);
+		 /* HBRUSH hBrush;
 		 HPEN bPen;
 		 hBrush = CreateHatchBrush(HS_BDIAGONAL,RGB(120,220,120));
 		 bPen = CreatePen(PS_INSIDEFRAME,1,RGB(120,120,120));
@@ -44,19 +69,19 @@ public:
 		 Ellipse(hdc,xl,yt,xr,yb);
 		 DeleteObject(hBrush);
 		 DeleteObject(bPen);
-		 ReleaseDC(ghMainWnd,hdc);	
+		 ReleaseDC(ghMainWnd,hdc);	*/
 	}
 
 	int drawUp(HWND ghMainWnd) {
-		if (fall&&yb<WINDOW_HEIGHT) {
-			yb += 5;
+		if (fall&&(yt+40)<WINDOW_HEIGHT) {
+			
 			yt +=5;
 			draw(ghMainWnd);
 			return 1;
 		}
 		else {
-			if (yb>0) {
-				yb -= 5;
+			if ((yt+40)>0) {
+				
 				yt -= 5;
 				draw(ghMainWnd);
 				return 1;
@@ -67,7 +92,7 @@ public:
 	void drawLeft(HWND ghMainWnd) {
 		if (xl>0) {
 			xl -= 5;
-			xr -= 5;
+			
 			draw(ghMainWnd);
 		}
 	}
@@ -75,7 +100,7 @@ public:
 		void drawRight(HWND ghMainWnd) {
 			if (xl<WINDOW_WIDTH) {
 			xl += 5;
-			xr += 5;
+			
 			draw(ghMainWnd);
 		}
 	}

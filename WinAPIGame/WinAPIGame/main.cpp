@@ -64,7 +64,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
      ghMainWnd = hwnd;
      ShowWindow (hwnd, iCmdShow) ;
      UpdateWindow (hwnd) ;
-     
+     ghInst = hInstance;
      while (GetMessage (&msg, NULL, 0, 0))
      {
           TranslateMessage (&msg) ;
@@ -83,12 +83,16 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	 int tmpY;
 	 static HBRUSH pBrush;
 	 boolean tmpfall;
-	 static Role role(WINDOW_WIDTH/2,0,WINDOW_WIDTH/2+50,50);
+	 static Role role(WINDOW_WIDTH/2,0);
 	 static Board * lastboard;
 	 Board * tmpboard;
 	 static List blist;
 	 randhelper rh;
-	      
+	 static int flag1= 1,flag2=0; 
+	 static char buf[50]; 
+	 static int laycount;
+
+	 static int tyb, tyt;
      switch (message)
      {
      case WM_CREATE:
@@ -120,6 +124,7 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				if (abs(lastboard->getYb()-0)<50) {
 					tmpY = lastboard->getYb() - 50;
 				}
+
 			}
 			tmpboard = new Board(tmpX,tmpY,tmpX+100,tmpY+10);
 			lastboard = tmpboard;
@@ -132,16 +137,29 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (!blist.empty()&&tmpboard->drawUp(ghMainWnd)==0) {
 				blist.removeTopBoard();
 			}
-			if (abs(tmpboard->getYt()-role.getYb())<=5) {
+			if (abs(tmpboard->getYt()-(role.getYt()+40))<=5) {
 				//判断角色脚下是否有木版，有则停留
-				if ((tmpboard->getXl()<role.getXl()&&tmpboard->getXr()>role.getXl())||(tmpboard->getXr()>role.getXr()&&tmpboard->getXl()<role.getXr()))
-					role.setFall(false);
+				
+				if ((tmpboard->getXl()<role.getXl()&&tmpboard->getXr()>role.getXl())||(tmpboard->getXr()>(role.getXl()+40)&&tmpboard->getXl()<role.getXl()+40)){
+				        //tyb = tmpboard->getYt()-role.getYb();
+						//tyt = role.getYt()-tyb;
+					    
+					    role.setOnBoard(tmpboard->getYb());
+						
+				        role.setFall(false);
+				}
 			}
 		}
 		//绘制角色
+		if(role.getFall()){
+		
+		laycount += 5;
+		}
 		role.drawUp(ghMainWnd);
-		 
-		 return 0;
+		hdc = GetDC(ghMainWnd);
+		wsprintf(buf, " %d", laycount);
+		TextOut(hdc, 300, 300, buf, strlen(buf));
+	    return 0;
 
 	 case WM_CHAR:
 		 tmpfall = true;
@@ -171,9 +189,11 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		 	for (int i=0;i<blist.getCount();i++) {
 			if (!blist.empty()) {
 				tmpboard = blist[(blist.getTil()+i)%blist.getMax()];
-				if (abs(tmpboard->getYt()-role.getYb())<=5)
-					if ((tmpboard->getXl()<role.getXl()&&tmpboard->getXr()>role.getXl())||(tmpboard->getXr()>role.getXr()&&tmpboard->getXl()<role.getXr()))
+				if (abs(tmpboard->getYt()-(role.getYt()+40))<=5)
+					if ((tmpboard->getXl()<role.getXl()&&tmpboard->getXr()>role.getXl())||(tmpboard->getXr()>(role.getXl()+40)&&tmpboard->getXl()<(role.getXl()+40))){
+						
 						tmpfall=false;
+					}
 			}
 		}
 			role.setFall(tmpfall);
