@@ -11,7 +11,6 @@
 #include "RandHelper.cpp"
 //人物
 #include "Role.cpp"
-
 //全局变量
 HWND ghMainWnd;
 SIZE size;
@@ -91,6 +90,9 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	 static int flag1= 1,flag2=0; 
 	 static char buf[50]; 
 	 static int laycount;
+	 static int num=0;
+	 //int nKey;
+	 
 
 	 static int tyb, tyt;
      switch (message)
@@ -111,7 +113,9 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_TIMER:
 		//重绘背景
 		drawBackground();
-
+		//role.mytimel(ghMainWnd,lnum);
+		//role.mytimer(ghMainWnd,rnum);
+		
 		//随机生成木块
 		if (rh.randCreate()==1) {
 			tmpX = rh.randX();
@@ -143,25 +147,46 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				if ((tmpboard->getXl()<role.getXl()&&tmpboard->getXr()>role.getXl())||(tmpboard->getXr()>(role.getXl()+40)&&tmpboard->getXl()<role.getXl()+40)){
 				        //tyb = tmpboard->getYt()-role.getYb();
 						//tyt = role.getYt()-tyb;
-					    
+					
 					    role.setOnBoard(tmpboard->getYb());
-						
+						role.setflag(3);						
 				        role.setFall(false);
 				}
 			}
 		}
 		//绘制角色
-		if(role.getFall()){
-		
-		laycount += 5;
+		if(role.getFall())
+		{
+			laycount += 5;	
 		}
-		role.drawUp(ghMainWnd);
+		
+		if(role.getFall()&&role.getflag()==0)
+		{
+			role.setflag(0);
+		}
+		else if(!role.getFall()&&role.getflag()==0)
+		{
+			role.setflag(3);
+		}
+
+
+		role.mytime(ghMainWnd);
+
 		hdc = GetDC(ghMainWnd);
 		wsprintf(buf, " %d", laycount);
-		TextOut(hdc, 300, 300, buf, strlen(buf));
+		TextOut(hdc, 10, 10, buf, strlen(buf));
 	    return 0;
 
+
+	    case WM_KEYUP:
+			/* nKey=(int)wParam;
+			 if(nKey==VK_LEFT||nKey==VK_RIGHT){*/
+			 role.setflag(0);
+			/* }*/
+		return 0;
+
 	 case WM_CHAR:
+
 		 tmpfall = true;
 		 drawBackground();
 		 for (int i=0;i<blist.getCount();i++) {
@@ -172,11 +197,23 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 
 		 switch (wParam) {
+		
+
+
+
 			case 'a':
-				role.drawLeft(ghMainWnd);
+				role.setflag(1);
+				/*rnum=1;
+				lnum++;
+				if(lnum>6)lnum=1;
+				role.drawLeft(ghMainWnd,rnum);*/
 				break;
 			case 'd':
-				role.drawRight(ghMainWnd);
+				role.setflag(2);
+				/*lnum=1;
+				rnum++;
+				if(rnum>4)rnum=1;
+				role.drawRight(ghMainWnd,rnum);*/
 				break;
 			case 'w':
 				role.setFall(false);
@@ -199,6 +236,17 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			role.setFall(tmpfall);
 
           return 0;
+
+	 /*case WM_KEYDOWN:
+			 if(nKey==VK_LEFT)
+				{
+					lnum=1;
+			 }
+			 else if(nKey==VK_RIGHT)
+			 {
+				 rnum=1;
+			 }
+			 return 0;*/
 		  
 	 case WM_LBUTTONDOWN:
 		 

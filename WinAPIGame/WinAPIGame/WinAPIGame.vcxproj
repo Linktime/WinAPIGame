@@ -75,13 +75,25 @@
   <ItemGroup>
     <ClInclude Include="GameHead.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="resource1.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPIGame.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="fit1.bmp" />
+    <Image Include="..\..\..\..\..\PS\新建文件夹\down\d1.bmp" />
+    <Image Include="..\..\..\..\..\PS\新建文件夹\down\d2.bmp" />
+    <Image Include="..\..\..\..\..\PS\新建文件夹\down\d3.bmp" />
+    <Image Include="..\..\..\..\..\PS\新建文件夹\down\d4.bmp" />
+    <Image Include="..\..\..\..\..\PS\新建文件夹\left\l2.bmp" />
+    <Image Include="..\..\..\..\..\PS\新建文件夹\left\l3.bmp" />
+    <Image Include="..\..\..\..\..\PS\新建文件夹\left\l4.bmp" />
+    <Image Include="..\..\..\..\..\PS\新建文件夹\left\l5.bmp" />
+    <Image Include="..\..\..\..\..\PS\新建文件夹\left\l6.bmp" />
+    <Image Include="..\..\..\..\..\PS\新建文件夹\right\r1.bmp" />
+    <Image Include="..\..\..\..\..\PS\新建文件夹\right\r2.bmp" />
+    <Image Include="..\..\..\..\..\PS\新建文件夹\right\r3.bmp" />
+    <Image Include="..\..\..\..\..\PS\新建文件夹\right\r4.bmp" />
+    <Image Include="l1.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
