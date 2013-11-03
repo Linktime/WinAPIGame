@@ -11,20 +11,24 @@
 #include "RandHelper.cpp"
 //ÈËÎï
 #include "Role.cpp"
+#include "resource.h"
 //È«¾Ö±äÁ¿
 
 static HPEN		blackPen;
+static TCHAR    szAppName[] = ("Í¿Ñ»ÌÓÍö") ;
 
 LRESULT CALLBACK WndProc (HWND, UINT, WPARAM, LPARAM) ;
 void drawBackground();
 
 int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                    PSTR szCmdLine, int iCmdShow)
+                    LPSTR szCmdLine, int iCmdShow)
 {
-     static TCHAR szAppName[] = TEXT ("Í¿Ñ»ÌÓÍö") ;
+     
      HWND         hwnd ;
      MSG          msg ;
      WNDCLASS     wndclass ;
+	 HACCEL       hAccel; 
+	 HINSTANCE    hInst;
 	 int x,y;
 
      wndclass.style         = CS_HREDRAW | CS_VREDRAW ;
@@ -35,7 +39,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
      wndclass.hIcon         = LoadIcon (NULL, IDI_APPLICATION) ;
      wndclass.hCursor       = LoadCursor (NULL, IDC_ARROW) ;
      wndclass.hbrBackground = (HBRUSH) GetStockObject (WHITE_BRUSH) ;
-     wndclass.lpszMenuName  = NULL ;
+	 wndclass.lpszMenuName  = MAKEINTRESOURCE(IDR_MENU);
      wndclass.lpszClassName = szAppName ;
 
      if (!RegisterClass (&wndclass))
@@ -49,7 +53,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	 y=(GetSystemMetrics(SM_CXSCREEN)-WINDOW_HEIGHT)/8;
 
      hwnd = CreateWindow (szAppName,                  // window class name
-                          TEXT ("Í¿Ñ»ÌÓÍö"), // window caption
+                         ("Í¿Ñ»ÌÓÍö"), // window caption
                           WS_OVERLAPPEDWINDOW,        // window style
                           x,              // initial x position
                           y,              // initial y position
@@ -63,11 +67,20 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
      ShowWindow (hwnd, iCmdShow) ;
      UpdateWindow (hwnd) ;
      ghInst = hInstance;
-     while (GetMessage (&msg, NULL, 0, 0))
+	 hAccel=LoadAccelerators(hInstance,MAKEINTRESOURCE(IDR_ACCELERATOR1));
+  while (GetMessage (&msg, NULL, 0, 0))   
+    {   
+        if (! TranslateAccelerator(hwnd, hAccel, &msg))   
+        {   
+			TranslateMessage(&msg);   
+             DispatchMessage(&msg);   
+        }   
+    } 
+     /*while (GetMessage (&msg, NULL, 0, 0))
      {
           TranslateMessage (&msg) ;
           DispatchMessage (&msg) ;
-     }
+     }*/
      return msg.wParam ;
 }
 
@@ -76,7 +89,7 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
      HDC         hdc ;
      PAINTSTRUCT ps ;
      RECT        rect ;
-	 HINSTANCE   hInstance;
+	 //HINSTANCE   hInstance;
 	 int tmpX;
 	 int tmpY;
 	 static HBRUSH pBrush;
@@ -90,6 +103,8 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	 static char buf[50]; 
 	 static int laycount;
 	 static int num=0;
+	 HMENU hMenu;
+
 	 //int nKey;
 	 
 
@@ -102,12 +117,33 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		  SetTimer(hwnd,TIMER,100,(TIMERPROC) NULL);
 		  lastboard = NULL;
 		  return 0 ;
+	case WM_COMMAND:   
+		hMenu=GetMenu(hwnd);
+             switch(LOWORD(wParam))   
+             {   
+			 case ID_MENU_START:
+				  MessageBeep(0);
+				  blist.clean();
+				  laycount=0;
+				  role.setflag(4);
+				  role.mytime(ghMainWnd);
+				  role.setFall(true);
+				  break;
+			 case ID_MENU_QUIT:
+				  PostQuitMessage (0); 
+				  break;
+			 case ID_MENU_HLEP:
+				  MessageBox (hwnd,TEXT ("aÏò×ó  dÏòÓÒ"),
+                        szAppName, MB_ICONINFORMATION | MB_OK) ;
+				  break;	
+			 }
+			 break;
           
 	case WM_SIZE:
 		  size.cx  = LOWORD(lParam);
 		  size.cy  = HIWORD(lParam);
 		  //pb->draw(ghMainWnd);
-		  return 0;
+		  
 
 	case WM_TIMER:
 		if (!role.getLife()) {
@@ -206,8 +242,10 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		 DeleteObject(pBrush);
 		 DeleteObject(blackPen);
           PostQuitMessage (0) ;
-          return 0 ;
-     }
+     break;
+    
+	 default:
      return DefWindowProc (hwnd, message, wParam, lParam) ;
 }
-
+return 0;
+}

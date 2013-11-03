@@ -19,7 +19,7 @@ private:
 
 public:
 
-	Role(int xl,int yt):xl(xl),yt(yt), width(40), height(40){
+	Role(int xl,int yt):xl(xl),yt(yt), width(40), height(37){
 		life=1;
 		l=1;
 		r=1;
@@ -239,6 +239,13 @@ public:
 			drawd(ghMainWnd,i);
 		}
 	}
+
+	void draws(HWND ghMainWnd) 
+	{
+		xl=WINDOW_WIDTH/2;
+		yt=0;
+		life=1;
+	}
 	/*void mytimel(HWND ghMainWnd,int lnum){
 		if(lnum=1){
 			if(l<=6){
@@ -346,6 +353,10 @@ public:
 			yt-=5;
 			}
 			drawd(ghMainWnd,2);
+		}
+		else if(flag==4)
+		{
+			draws(ghMainWnd);
 		}
 		
 	}

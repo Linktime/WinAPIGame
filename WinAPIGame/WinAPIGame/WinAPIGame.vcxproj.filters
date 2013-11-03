@@ -45,46 +45,46 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\..\PS\新建文件夹\left\l2.bmp">
+    <Image Include="p\l1.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="..\..\..\..\..\PS\新建文件夹\left\l3.bmp">
+    <Image Include="p\l2.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="..\..\..\..\..\PS\新建文件夹\left\l4.bmp">
+    <Image Include="p\l3.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="..\..\..\..\..\PS\新建文件夹\left\l5.bmp">
+    <Image Include="p\l4.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="..\..\..\..\..\PS\新建文件夹\left\l6.bmp">
+    <Image Include="p\l5.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="..\..\..\..\..\PS\新建文件夹\right\r1.bmp">
+    <Image Include="p\l6.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="..\..\..\..\..\PS\新建文件夹\right\r2.bmp">
+    <Image Include="p\r1.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="..\..\..\..\..\PS\新建文件夹\right\r3.bmp">
+    <Image Include="p\r2.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="..\..\..\..\..\PS\新建文件夹\right\r4.bmp">
+    <Image Include="p\r3.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="..\..\..\..\..\PS\新建文件夹\down\d1.bmp">
+    <Image Include="p\r4.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="..\..\..\..\..\PS\新建文件夹\down\d2.bmp">
+    <Image Include="p\d1.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="..\..\..\..\..\PS\新建文件夹\down\d3.bmp">
+    <Image Include="p\d2.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="..\..\..\..\..\PS\新建文件夹\down\d4.bmp">
+    <Image Include="p\d3.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="l1.bmp">
+    <Image Include="p\d4.bmp">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>
