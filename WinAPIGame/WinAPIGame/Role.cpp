@@ -53,6 +53,11 @@ public:
 	void setFall(boolean f){
 		fall = f;
 	}
+
+	int getLife(){
+		return life;
+	}
+
 	boolean getFall(){
 		return fall;
 	}
@@ -122,16 +127,12 @@ public:
 		 hdc = GetDC(ghMainWnd);
 		 HBITMAP r[6], tmpBitmap, cBitmap;
 		 memDC = CreateCompatibleDC(hdc);
-		 //cBitmap = CreateCompatibleBitmap(memDC, 120,120);
-		 //SelectObject(memDC, cBitmap);
 		 r[1] = LoadBitmap(ghInst, "R1");
 		 r[2] = LoadBitmap(ghInst, "R2");
 		 r[3] = LoadBitmap(ghInst, "R3");
 		 r[4] = LoadBitmap(ghInst, "R4");
-		// SelectObject(memDC, db);
 
 		 tmpBitmap = (HBITMAP)SelectObject(memDC, r[i]);
-		 // BitBlt(hdc, 50, 50, 120, 120, memDC, 0 ,0 ,SRCCOPY);
 		 TransparentBlt(hdc,xl,yt,40,40,memDC,0,0,width,height,RGB(0,0,255));
 		 SelectObject(hdc, tmpBitmap);
 		 for(int i=1;i<=4;i++)
@@ -141,6 +142,14 @@ public:
 	}
 	void drawd(HWND & ghMainWnd,int i)
 	{
+		if (yt<0) {
+			life=0;
+			return;
+		}
+		else if ((yt+40)>WINDOW_HEIGHT) {
+			life=0;
+			return ;
+		}
 		HDC hdc, memDC;
 		 hdc = GetDC(ghMainWnd);
 		 HBITMAP d[6], tmpBitmap, cBitmap;
@@ -167,16 +176,18 @@ public:
 
 	int drawDown(HWND ghMainWnd,int i) 
 	{
-		if (fall&&(yt+40)<WINDOW_HEIGHT) 
+		if (fall) 
 		{
-			
-			yt +=5;
+			if ((yt+40)<WINDOW_HEIGHT) {
+			yt +=10;
 			drawd(ghMainWnd,i);
 			return 1;
+			}
+			else return 0;
 		}
 		else 
 		{
-			if ((yt+40)>0) 
+			if (yt>0) 
 			{
 				
 				yt -= 5;
@@ -188,6 +199,7 @@ public:
 
 	void drawLeft(HWND ghMainWnd,int i) 
 	{
+		
 		if (xl>0&&!fall) 
 		{
 			xl -= 10;
@@ -272,7 +284,7 @@ public:
 		{
 			if (fall&&(yt+40)<WINDOW_HEIGHT)
 			{ 
-				yt +=5;
+				yt +=10;
 			}
 			else{
 			yt-=5;
@@ -293,7 +305,7 @@ public:
 		{
 			if (fall&&(yt+40)<WINDOW_HEIGHT)
 			{ 
-				yt +=5;
+				yt +=10;
 			}
 			else{
 			yt-=5;
@@ -328,7 +340,7 @@ public:
 		{
 			if (fall&&(yt+40)<WINDOW_HEIGHT)
 			{ 
-				yt +=5;
+				yt +=10;
 			}
 			else{
 			yt-=5;

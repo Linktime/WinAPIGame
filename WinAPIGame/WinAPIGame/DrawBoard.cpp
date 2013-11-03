@@ -19,25 +19,23 @@ public :
 		return yb;
 	}
 
-	void draw(HWND & ghMainWnd) {
-		 HDC hdc;
-		 hdc = GetDC(ghMainWnd);
+	HDC & draw(HDC & memDC) {
 		 HBRUSH hBrush;
 		 HPEN bPen;
 		 hBrush = CreateHatchBrush(HS_BDIAGONAL,RGB(120,220,120));
 		 bPen = CreatePen(PS_INSIDEFRAME,1,RGB(120,120,120));
-		 SelectObject(hdc,hBrush);
-		 SelectObject(hdc,bPen);
-		 RoundRect(hdc,xl,yt,xr,yb,10,10);
+		 SelectObject(memDC,hBrush);
+		 SelectObject(memDC,bPen);
+		 RoundRect(memDC,xl,yt,xr,yb,10,10);
 		 DeleteObject(hBrush);
 		 DeleteObject(bPen);
-		 ReleaseDC(ghMainWnd,hdc);
+		 return memDC;
 	}
-	int drawUp(HWND & ghMainWnd) {
+
+	int drawUp() {
 		if (yb>-5) {
 			yb -= 5;
 			yt -= 5;
-			draw(ghMainWnd);
 			return 1;
 		} else return 0;
 	}

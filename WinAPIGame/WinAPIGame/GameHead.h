@@ -11,4 +11,6 @@
 #define _UNICODE
 //SIZE size;
 static HINSTANCE ghInst;
+static HWND ghMainWnd;
+static SIZE size;
 #endif

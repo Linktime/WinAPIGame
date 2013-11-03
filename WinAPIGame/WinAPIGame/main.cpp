@@ -12,8 +12,7 @@
 //人物
 #include "Role.cpp"
 //全局变量
-HWND ghMainWnd;
-SIZE size;
+
 static HPEN		blackPen;
 
 LRESULT CALLBACK WndProc (HWND, UINT, WPARAM, LPARAM) ;
@@ -111,11 +110,10 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		  return 0;
 
 	case WM_TIMER:
-		//重绘背景
-		drawBackground();
-		//role.mytimel(ghMainWnd,lnum);
-		//role.mytimer(ghMainWnd,rnum);
-		
+		if (!role.getLife()) {
+			return 0;
+		}
+
 		//随机生成木块
 		if (rh.randCreate()==1) {
 			tmpX = rh.randX();
@@ -136,28 +134,12 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		
 		//木板上升
-		for (int i=0;i<blist.getCount();i++) {
-			tmpboard = blist[(blist.getTil()+i)%blist.getMax()];
-			if (!blist.empty()&&tmpboard->drawUp(ghMainWnd)==0) {
-				blist.removeTopBoard();
-			}
-			if (abs(tmpboard->getYt()-(role.getYt()+40))<=5) {
-				//判断角色脚下是否有木版，有则停留
-				
-				if ((tmpboard->getXl()<role.getXl()&&tmpboard->getXr()>role.getXl())||(tmpboard->getXr()>(role.getXl()+40)&&tmpboard->getXl()<role.getXl()+40)){
-				        //tyb = tmpboard->getYt()-role.getYb();
-						//tyt = role.getYt()-tyb;
-					
-					    role.setOnBoard(tmpboard->getYb());
-						role.setflag(3);						
-				        role.setFall(false);
-				}
-			}
-		}
-		//绘制角色
+		blist.drawAll(role);
+		
+		//设置角色状态
 		if(role.getFall())
 		{
-			laycount += 5;	
+			laycount += 10;	
 		}
 		
 		if(role.getFall()&&role.getflag()==0)
@@ -173,47 +155,25 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		role.mytime(ghMainWnd);
 
 		hdc = GetDC(ghMainWnd);
-		wsprintf(buf, " %d", laycount);
+		wsprintf(buf, "分数： %d", laycount);
 		TextOut(hdc, 10, 10, buf, strlen(buf));
+		ReleaseDC(ghMainWnd,hdc);
 	    return 0;
 
 
 	    case WM_KEYUP:
-			/* nKey=(int)wParam;
-			 if(nKey==VK_LEFT||nKey==VK_RIGHT){*/
 			 role.setflag(0);
-			/* }*/
 		return 0;
 
 	 case WM_CHAR:
 
 		 tmpfall = true;
-		 drawBackground();
-		 for (int i=0;i<blist.getCount();i++) {
-			if (!blist.empty()) {
-				tmpboard = blist[(blist.getTil()+i)%blist.getMax()];
-				tmpboard->draw(ghMainWnd);
-			}
-		}
-
 		 switch (wParam) {
-		
-
-
-
 			case 'a':
 				role.setflag(1);
-				/*rnum=1;
-				lnum++;
-				if(lnum>6)lnum=1;
-				role.drawLeft(ghMainWnd,rnum);*/
 				break;
 			case 'd':
 				role.setflag(2);
-				/*lnum=1;
-				rnum++;
-				if(rnum>4)rnum=1;
-				role.drawRight(ghMainWnd,rnum);*/
 				break;
 			case 'w':
 				role.setFall(false);
@@ -236,17 +196,6 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			role.setFall(tmpfall);
 
           return 0;
-
-	 /*case WM_KEYDOWN:
-			 if(nKey==VK_LEFT)
-				{
-					lnum=1;
-			 }
-			 else if(nKey==VK_RIGHT)
-			 {
-				 rnum=1;
-			 }
-			 return 0;*/
 		  
 	 case WM_LBUTTONDOWN:
 		 
@@ -261,32 +210,4 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
      }
      return DefWindowProc (hwnd, message, wParam, lParam) ;
 }
-
-void drawBackground(){
-	HBRUSH bBrush;
-	HPEN oPen;
-	RECT rt;
-	HDC hdc;
-	hdc = GetDC(ghMainWnd);
-	oPen = CreatePen(PS_SOLID,1,RGB(255,204,153));
-	bBrush = CreateSolidBrush(RGB(235, 255, 255));
-	rt.left = 0;
-	rt.right = size.cx;
-	rt.top = 0;
-	rt.bottom = size.cy;
-	SelectObject(hdc, bBrush);
-	FillRect(hdc,&rt,NULL);
-	SelectObject(hdc, oPen);
-	for (int i=0;i<size.cy;i+=15) {
-		MoveToEx(hdc,0,i,NULL);
-		LineTo(hdc,size.cx,i);
-	}
-	for (int i=0;i<size.cx;i+=15) {
-		MoveToEx(hdc,i,0,NULL);
-		LineTo(hdc,i,size.cy);
-	}
-	DeleteObject(bBrush);
-	DeleteObject(oPen);
-	ReleaseDC(ghMainWnd,hdc);
-};
 
