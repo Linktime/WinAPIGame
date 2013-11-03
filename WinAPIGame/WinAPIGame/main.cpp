@@ -36,8 +36,8 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
      wndclass.cbClsExtra    = 0 ;
      wndclass.cbWndExtra    = 0 ;
      wndclass.hInstance     = hInstance ;
-     wndclass.hIcon         = LoadIcon (NULL, IDI_APPLICATION) ;
-     wndclass.hCursor       = LoadCursor (NULL, IDC_ARROW) ;
+     wndclass.hIcon         = LoadIcon (hInstance, "rss") ;
+     wndclass.hCursor       = LoadCursor (hInstance, "arrow") ;
      wndclass.hbrBackground = (HBRUSH) GetStockObject (WHITE_BRUSH) ;
 	 wndclass.lpszMenuName  = MAKEINTRESOURCE(IDR_MENU);
      wndclass.lpszClassName = szAppName ;

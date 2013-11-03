@@ -94,6 +94,10 @@
     <Image Include="p\r2.bmp" />
     <Image Include="p\r3.bmp" />
     <Image Include="p\r4.bmp" />
+    <Image Include="p\rss.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="p\Arrow.cur" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
