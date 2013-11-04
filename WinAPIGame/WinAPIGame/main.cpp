@@ -87,12 +87,9 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
 LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
      HDC         hdc ;
-     PAINTSTRUCT ps ;
-     RECT        rect ;
 	 //HINSTANCE   hInstance;
 	 int tmpX;
 	 int tmpY;
-	 static HBRUSH pBrush;
 	 boolean tmpfall;
 	 static Role role(WINDOW_WIDTH/2,0);
 	 static Board * lastboard;
@@ -103,6 +100,7 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	 static char buf[50]; 
 	 static int laycount;
 	 static int num=0;
+	 static bool pause;
 	 HMENU hMenu;
 
 	 //int nKey;
@@ -112,10 +110,9 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
      switch (message)
      {
      case WM_CREATE:
-		  blackPen = CreatePen(PS_SOLID,20,RGB(0,0,0));
-		  pBrush = CreateSolidBrush(RGB(255, 213, 213));
 		  SetTimer(hwnd,TIMER,100,(TIMERPROC) NULL);
 		  lastboard = NULL;
+		  pause=false;
 		  return 0 ;
 	case WM_COMMAND:   
 		hMenu=GetMenu(hwnd);
@@ -125,14 +122,16 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				  MessageBeep(0);
 				  blist.clean();
 				  laycount=0;
-				  role.setflag(4);
+				  role.setflag(0);
+				  role.init();
+				  SetTimer(hwnd,TIMER,100,(TIMERPROC) NULL);
 				  role.mytime(ghMainWnd);
 				  role.setFall(true);
 				  break;
 			 case ID_MENU_QUIT:
 				  PostQuitMessage (0); 
 				  break;
-			 case ID_MENU_HLEP:
+			 case ID_MENU_HELP:
 				  MessageBox (hwnd,TEXT ("a向左  d向右"),
                         szAppName, MB_ICONINFORMATION | MB_OK) ;
 				  break;	
@@ -142,11 +141,14 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_SIZE:
 		  size.cx  = LOWORD(lParam);
 		  size.cy  = HIWORD(lParam);
-		  //pb->draw(ghMainWnd);
 		  
 
 	case WM_TIMER:
 		if (!role.getLife()) {
+			pause = true;
+			KillTimer(ghMainWnd,TIMER);
+			wsprintf(buf, "您的分数是： %d", laycount);
+			MessageBox(ghMainWnd,buf,"你输了",NULL);
 			return 0;
 		}
 
@@ -239,9 +241,8 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	
      case WM_DESTROY:
 		 blist.clean();
-		 DeleteObject(pBrush);
-		 DeleteObject(blackPen);
-          PostQuitMessage (0) ;
+		 KillTimer(ghMainWnd,TIMER);
+         PostQuitMessage (0) ;
      break;
     
 	 default:

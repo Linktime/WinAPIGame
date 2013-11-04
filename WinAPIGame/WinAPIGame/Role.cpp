@@ -92,6 +92,12 @@ public:
 	//	 DeleteObject(bPen);
 	//	 ReleaseDC(ghMainWnd,hdc);	*/
 	//}
+
+	void init(){
+		yt=0;
+		xl=WINDOW_WIDTH/2;
+		life=1;
+	}
 	
 
 	void drawl(HWND & ghMainWnd,int i)
